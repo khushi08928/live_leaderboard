@@ -1,10 +1,14 @@
 import express from "express";
 import Redis from "ioredis";
+import dotenv from "dotenv";
+dotenv.config({path:".env.local"});
 
 const app=express();
 app.use(express.json());
 
-const redis=new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const PORT=process.env.PORT;
+
+const redis=new Redis(process.env.REDIS_URL);
 
 app.post("/post/:id/view",async(req,res)=>{
     const postId=req.params.id;
@@ -42,6 +46,6 @@ app.get("/leaderboard/:userid/rank",async(req,res)=>{
     return res.json({userRank:userRank});
 })
 
-app.listen(3000,()=>{
-    console.log("app is running on port 3000");
+app.listen(PORT,()=>{
+    console.log("app is running on port",PORT);
 })
