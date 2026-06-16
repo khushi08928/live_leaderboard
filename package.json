@@ -1,0 +1,19 @@
+{
+  "name": "redis",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.2.1",
+    "ioredis": "^5.11.1",
+    "mongoose": "^9.7.0"
+  }
+}
