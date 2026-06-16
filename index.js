@@ -10,26 +10,25 @@ const PORT=process.env.PORT;
 
 const redis=new Redis(process.env.REDIS_URL);
 
+const postLeaderboardKey = "posts:top-views";
 app.post("/post/:id/view",async(req,res)=>{
     const postId=req.params.id;
-    const viewcount=req.body.viewcount;
-    await redis.set(`post:${postId}:viewcount`,viewcount);
-    const newcount=await redis.incr(`post:${postId}:viewcount`)
+    const newcount=await redis.zincrby(postLeaderboardKey,1,postId)
     return res.json({message:newcount});
 })
 
-const leaderboardkey="game:top-scores";
+const gameleaderboardkey="game:top-scores";
 app.post("/leaderboard/score",async(req,res)=>{
     const payload={
         userid:req.body.userid,
         score:req.body.score
     }
-    const newscore=await redis.zincrby(leaderboardkey,payload.score,payload.userid);
+    const newscore=await redis.zincrby(gameleaderboardkey,payload.score,payload.userid);
     return res.json({newScore:newscore});
 })
 
 app.get("/leaderboard",async(req,res)=>{
-    const rawresult=await redis.zrevrange(leaderboardkey,0,1,"WITHSCORES");
+    const rawresult=await redis.zrevrange(gameleaderboardkey,0,1,"WITHSCORES");
     const formattedresult=[];
     for(let i=0;i<rawresult.length;i+=2){
         formattedresult.push({
@@ -42,7 +41,7 @@ app.get("/leaderboard",async(req,res)=>{
 
 app.get("/leaderboard/:userid/rank",async(req,res)=>{
     const userid=req.params.userid;
-    const userRank=await redis.zrevrank(leaderboardkey,userid);
+    const userRank=await redis.zrevrank(gameleaderboardkey,userid);
     return res.json({userRank:userRank});
 })
 
